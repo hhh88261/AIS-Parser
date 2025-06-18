@@ -20,19 +20,19 @@ public class TransmitService implements ITransmit {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList();
 
     // emitter 처리
-    public SseEmitter addEmitter(SseEmitter emitter){
+    public SseEmitter addEmitter(SseEmitter emitter) {
         emitters.add(emitter);
         return emitter;
     }
 
     // AIS 메시지 받아 브로드캐스트
-    public void resultMessage(String aisMessage){
-        for (SseEmitter emitter : emitters){
-            try{
+    public void resultMessage(String aisMessage) {
+        for (SseEmitter emitter : emitters) {
+            try {
                 emitter.send(SseEmitter.event()
                         .name("aisMessage")
                         .data(aisMessage));
-            } catch (IOException e){
+            } catch (IOException e) {
                 emitter.completeWithError(e);
                 emitters.remove(emitter);
             }

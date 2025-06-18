@@ -9,4 +9,5 @@ import java.io.IOException;
 
 public interface ParsingService {
     void type1Decoder(String response) throws AisMessageException, SixbitException, SentenceException, IOException;
+    void type5Decoder(String rawMessagePart1, String rawMessagePart2) throws Exception;
 }

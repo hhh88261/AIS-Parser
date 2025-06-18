@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Component
 public class CoordinateCalculate implements CoordinateCalculateService {
-    public Map<String,String> coordinateCalculate(Map<String, String> convertedType1Message)  {
+    public Map<String, String> coordinateCalculate(Map<String, String> convertedType1Message) {
 
         // 계산 결과를 담을 새로운 Map 생성
         Map<String, String> resultMessage = new HashMap<>(convertedType1Message);
@@ -52,7 +52,7 @@ public class CoordinateCalculate implements CoordinateCalculateService {
     }
 
     // 미래 위치 계산
-    public  String CalculateLocation(String Pos, String cog, String Sog) {
+    public String CalculateLocation(String Pos, String cog, String Sog) {
         // lon과 lat에 저장, 형변환
         String[] coordinates = Pos.split("/");
 

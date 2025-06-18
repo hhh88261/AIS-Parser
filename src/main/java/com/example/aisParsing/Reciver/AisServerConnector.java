@@ -1,6 +1,7 @@
 package com.example.aisParsing.Reciver;
 
 import com.example.aisParsing.Service.ParsingService;
+import dk.dma.ais.sentence.Vdm;
 import jakarta.annotation.PostConstruct;
 import jakarta.websocket.DeploymentException;
 import org.springframework.boot.CommandLineRunner;
@@ -15,15 +16,12 @@ import java.net.Socket;
 // AIS 서버와 연결
 @Component
 public class AisServerConnector implements CommandLineRunner {
-
-    // 메시지 타입 분류기 의존성 주입
     private final ParsingService parsingService;
 
     public AisServerConnector(ParsingService parsingService) {
         this.parsingService = parsingService;
     }
 
-    // Bean 초기화 되자마자 백그라운드에서 실행
     @Override
     public void run(String... args) throws Exception {
         // webSocketOpen.startWebSocket();
@@ -31,16 +29,32 @@ public class AisServerConnector implements CommandLineRunner {
             socket.connect(new InetSocketAddress("localhost", 9999));
             System.out.println("TCP소켓 접속 됨");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
                 String response;
+
                 // reader의 데이터를 읽어옴
                 while ((response = reader.readLine()) != null) {
-                    parsingService.type1Decoder(response);
-                    System.out.println(response);
+                    String[] parts = response.split(",");
+
+                    // Type 1,5 분류
+                    if (parts.length > 1 && parts[5].startsWith("5")) {
+                        String rawMessagePart1 = response;
+                        while ((response = reader.readLine()) != null) {
+                            String rawMessagePart2 = response;
+                            // Type 5 메시지 전달
+                            parsingService.type5Decoder(rawMessagePart1, rawMessagePart2);
+                        }
+                    } else {
+                        // Type 1 메시지 전달
+                        parsingService.type1Decoder(response);
+                        System.out.println(response);
+                    }
+
+
                 }
             }
         } catch (Exception e) {
             System.out.println("연결 실패");
         }
     }
-
 }
