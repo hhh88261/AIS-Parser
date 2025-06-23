@@ -1,7 +1,6 @@
 package com.example.aisParsing.Processor.Type5;
 
 import com.example.aisParsing.Processor.JsonConverter;
-import com.example.aisParsing.Processor.Type1.MessageBuilder;
 import com.example.aisParsing.Service.ITransmit;
 import com.example.aisParsing.Service.Type5ProcessorService;
 import dk.dma.ais.message.AisMessage5;
@@ -32,6 +31,9 @@ public class Type5Processor implements Type5ProcessorService {
     // 제원정보 조회(해양수산부 API)
     public void shipImformation(Map<String, String> map) throws Exception {
         String[] shipInfo = shipSpecificationInformation.type5message(map.get("callSign"), map.get("shipName"));
+
+        //TODO : JsonConvert 메서드 전달 로직 추가
+
     }
 
     // 결과 값 전송(클라이언트 송신)

@@ -29,7 +29,6 @@ public class CoordinateCalculate implements CoordinateCalculateService {
             String predictedValue = CalculateLocation(calculatedPos, calculatedCog, calculatedSog);
             resultMessage.put("predictedValue", predictedValue);
         }
-
         return resultMessage;
     }
 
