@@ -1,10 +1,10 @@
 package com.example.aisParsing.Processor.Type1;
 
+import com.example.aisParsing.Entity.ShipInfoEntity;
 import com.example.aisParsing.Processor.JsonConverter;
-import com.example.aisParsing.Service.ITransmit;
-import com.example.aisParsing.Service.ShipLocateService;
-import com.example.aisParsing.Service.Type1ProcessorService;
-import com.example.aisParsing.Service.CoordinateCalculateService;
+import com.example.aisParsing.Repository.ShipInfoRepository;
+import com.example.aisParsing.Service.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -14,20 +14,21 @@ public class Type1Processor implements Type1ProcessorService {
     private final MessageBuilder messageBuilder;
     private final JsonConverter jsonConverter;
     private final ShipLocateService shipLocateService;
-
+    private final ShipInfoService shipInfoService;
     private final CoordinateCalculateService coordinateCalculateService;
     private final ITransmit iTransmit;
 
-    public Type1Processor(MessageBuilder messageBuilder, CoordinateCalculateService coordinateCalculateService, JsonConverter jsonConverter, ITransmit iTransmit, ShipLocateService shipLocateService) {
+    public Type1Processor(MessageBuilder messageBuilder, CoordinateCalculateService coordinateCalculateService, JsonConverter jsonConverter, ITransmit iTransmit, ShipLocateService shipLocateService,ShipInfoService shipInfoService) {
         this.messageBuilder = messageBuilder;
         this.coordinateCalculateService = coordinateCalculateService;
         this.jsonConverter = jsonConverter;
         this.iTransmit = iTransmit;
         this.shipLocateService = shipLocateService;
+        this.shipInfoService = shipInfoService;
     }
 
     // 요소 추출 및 가공
-    public void messageConvert(String type1Message) {
+    public void messageConvert(String type1Message) {;
         Map<String, String> convertedType1Message = messageBuilder.messageBuilder(type1Message);
         coordinateCalculate(convertedType1Message);
     }
@@ -39,9 +40,14 @@ public class Type1Processor implements Type1ProcessorService {
         saveLocate(calculatedMessage);
     }
 
-    // DB 저장
+    // DB 저장 및 Upsert
+    @Async
     public void saveLocate(Map<String, String> calculatedMessage){
-        shipLocateService.locateRepository(calculatedMessage.get("mmsi"),calculatedMessage.get("pos"));
+        String mmsi = calculatedMessage.get("userId");
+        String pos = calculatedMessage.get("pos");
+
+        shipLocateService.insertShipLocate(mmsi, pos);
+        shipInfoService.upsertShipInfo(mmsi);
     }
 
     //Json 변환

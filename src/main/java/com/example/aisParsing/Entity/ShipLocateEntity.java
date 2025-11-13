@@ -1,9 +1,6 @@
 package com.example.aisParsing.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,12 +11,18 @@ import java.time.LocalTime;
 public class ShipLocateEntity {
 
     @Id
-    private String Mmsi;
-    private String lat;
-    private String lon;
-    private LocalDate shipDate;
-    private LocalTime shipTime;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
+    private String Mmsi;
+
+    private String lat;
+
+    private String lon;
+
+    private LocalDate shipDate;
+
+    private LocalTime shipTime;
 
     public String getMmsi(){
         return Mmsi;

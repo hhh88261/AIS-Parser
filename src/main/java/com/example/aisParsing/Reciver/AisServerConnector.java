@@ -24,37 +24,27 @@ public class AisServerConnector implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // webSocketOpen.startWebSocket();
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress("localhost", 9999));
-            System.out.println("TCP소켓 접속 됨");
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        while(true) {
+            // webSocketOpen.startWebSocket();
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress("localhost", 9999));
+                System.out.println("TCP소켓 접속 됨");
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-                String response;
+                    String response;
 
-                // reader의 데이터를 읽어옴
-                while ((response = reader.readLine()) != null) {
-                    String[] parts = response.split(",");
+                    // reader의 데이터를 읽어옴
+                    while ((response = reader.readLine()) != null) {
 
-                    // Type 1,5 분류
-                    if (parts.length > 1 && parts[5].startsWith("5")) {
-                        String rawMessagePart1 = response;
-                        while ((response = reader.readLine()) != null) {
-                            String rawMessagePart2 = response;
-                            // Type 5 메시지 전달
-                            parsingService.type5Decoder(rawMessagePart1, rawMessagePart2);
-                        }
-                    } else {
                         // Type 1 메시지 전달
                         parsingService.type1Decoder(response);
                         System.out.println(response);
                     }
-
-
                 }
+            } catch (Exception e) {
+                System.out.println("연결 실패");
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            System.out.println("연결 실패");
         }
     }
 }

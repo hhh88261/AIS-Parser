@@ -6,9 +6,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.io.IOException;
 
-
-
-
 @SpringBootApplication
 @EnableAsync
 public class AisParsingApplication {
